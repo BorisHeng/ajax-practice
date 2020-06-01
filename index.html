@@ -1,71 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <title>Document</title>
-  </head>
 
-  <body>
-    <p id="text">賣歌啊捏怕我媽媽</p>
-    <p>測試哦</p>
-    <!-- <button class="getText" onclick="getData()">點我看看R</button> -->
-    <form id="check" method="POST">
-      <label for="account">請輸入帳號以便查詢您的物品：</label>
-      <input type="text" name="account" id="account" />
-      <input type="button" onclick="getData()" value="送出" />
-    </form>
-    <p id="error" style="display: none;"></p>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <title>Document</title>
+</head>
 
-    <table>
-      <thead>
-        <tr>
-          <th>帳號</th>
-          <th>物品名稱</th>
-          <th>獲得時間</th>
-        </tr>
-      </thead>
-      <tbody id="showData"></tbody>
-    </table>
-    <script>
-      function getData() {
-        $("#text").text("讀取中..");
-        $(".getText").show();
-        $.ajax({
-          url: "serve.php",
-          type: "POST",
-          data: $("#check").serialize(),
-          dataType: "html",
-          async: true,
-          success: function (res) {
-            data = JSON.parse(res);
-            console.log(data);
-            $("#showData").html("");
-            $("#error").css("display", "block");
-            $("#error").css("color", "red");
-            for (let i = 0; i < data.length; i++) {
-              $("#showData").append(
-                `<tr>
+<body>
+  <p id="text">賣歌啊捏怕我媽媽</p>
+  <p>測試哦</p>
+  <!-- <button class="getText" onclick="getData()">點我看看R</button> -->
+  <form id="check" method="POST">
+    <label for="account">請輸入帳號以便查詢您的物品：</label>
+    <input type="text" name="account" id="account" />
+    <input type="button" onclick="getData()" id="send" value="送出" />
+  </form>
+  <p id="error" style="display: none;"></p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>帳號</th>
+        <th>物品名稱</th>
+        <th>獲得時間</th>
+      </tr>
+    </thead>
+    <tbody id="showData"></tbody>
+  </table>
+  <script>
+    function getData() {
+      $("#text").text("讀取中..");
+      $('#send').attr("disabled", true);
+      $(".getText").show();
+      $.ajax({
+        url: "serve.php",
+        type: "POST",
+        data: $("#check").serialize(),
+        dataType: "html",
+        async: true,
+        success: function (res) {
+          data = JSON.parse(res);
+          console.log(data);
+          $("#showData").html("");
+          $("#error").css("display", "block");
+          $("#error").css("color", "red");
+          for (let i = 0; i < data.length; i++) {
+            $("#showData").append(
+              `<tr>
                     <td>${data[i].account}</td>
                     <td>${data[i].stage}</td>
                     <td>${data[i].createtime}</td>
                 </tr>`
-              );
-            }
-            if (data.length <= 0) {
-              $("#error").text("沒這個帳號內");
-            }
-            $("#text").text("讀取完畢");
-            $(".getText").hide();
-          },
-          error: function (e) {
-            console.log("error");
-          },
-        });
-      }
+            );
+          }
+          if (data.length <= 0) {
+            $("#error").text("沒這個帳號內");
+            $('#send').attr("disabled", false);
+          }
+          $("#text").text("讀取完畢");
+          $(".getText").hide();
+          $('#send').attr("disabled", false);
+        },
+        error: function (e) {
+          console.log("error");
+        },
+      });
+    }
 
-      function showData() {}
-    </script>
-  </body>
+    function showData() {}
+  </script>
+</body>
+
 </html>
